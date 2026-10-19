@@ -1,12 +1,16 @@
 /** ISO datetime strings, local time (Africa/Casablanca). */
 export type TimeWindow = { start: string; end: string };
 
+/** Recurring unavailability: every given weekday (0 = Sunday … 6 = Saturday), "HH:mm" local times. */
+export type WeeklyWindow = { weekday: number; from: string; to: string };
+
 export type Team = {
   id: string;
   name: string;
   /** max 8 */
   players: string[];
   unavailable: TimeWindow[];
+  unavailableWeekly: WeeklyWindow[];
 };
 
 export type Slot = { id: string; start: string; end: string; pitch: number };

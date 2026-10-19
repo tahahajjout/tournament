@@ -1,4 +1,4 @@
-import { addMinutes, areIntervalsOverlapping, parseISO } from "date-fns";
+import { addMinutes, areIntervalsOverlapping, getDay, parseISO } from "date-fns";
 import { describe, expect, test } from "vitest";
 import { groupMatches } from "../src/domain/roundRobin";
 import { DEFAULT_CONFIG } from "../src/domain/rules";
@@ -6,7 +6,7 @@ import { schedule, type ScheduleInput } from "../src/domain/scheduler";
 import { generateSlots } from "../src/domain/slots";
 import type { Group, Match, Team, TimeWindow } from "../src/domain/types";
 
-const team = (id: string, unavailable: TimeWindow[] = []): Team => ({ id, name: id, players: [], unavailable });
+const team = (id: string, unavailable: TimeWindow[] = []): Team => ({ id, name: id, players: [], unavailable, unavailableWeekly: [] });
 const day = (d: number, from: string, to: string): TimeWindow => ({
   start: `2026-11-0${d}T${from}`,
   end: `2026-11-0${d}T${to}`,
@@ -143,6 +143,16 @@ describe("schedule", () => {
     expect(unplaced).toEqual([]);
     expect(matches.find((m) => m.id === "FINAL")!.slotId).toBe("2026-11-03T18:00#1");
     expect(warnings).toEqual([{ matchId: "FINAL", unavailableTeamIds: ["t1"] }]);
+  });
+
+  test("weekly unavailability applies on every matching date", () => {
+    const input = eightTeams();
+    const weekday = getDay(parseISO("2026-11-02"));
+    input.teams[0] = { ...input.teams[0]!, unavailableWeekly: [{ weekday, from: "00:00", to: "23:59" }] };
+    const { matches, unplaced } = schedule(input);
+    expect(unplaced).toEqual([]);
+    const a1Days = matches.filter((m) => teamsOf(m).includes("a1")).map((m) => m.slotId!.slice(0, 10));
+    expect(a1Days).not.toContain("2026-11-02");
   });
 
   test("same input → identical calendar", () => {

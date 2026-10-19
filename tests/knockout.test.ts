@@ -116,7 +116,7 @@ test("end to end: 9 teams drawn, fixtures + knockout scheduled with the final la
   const result = schedule({
     matches: [...groups.flatMap(groupMatches), ...knockout.matches],
     slots,
-    teams: ids(9).map((id) => ({ id, name: id, players: [], unavailable: [] })),
+    teams: ids(9).map((id) => ({ id, name: id, players: [], unavailable: [], unavailableWeekly: [] })),
     groups,
     config: DEFAULT_CONFIG,
   });

@@ -1,0 +1,34 @@
+import type { TieBreaker } from "../domain/types";
+import { t } from "../i18n";
+
+export function TieBreakerList({ value, onChange }: { value: TieBreaker[]; onChange: (v: TieBreaker[]) => void }) {
+  const move = (i: number, by: -1 | 1) => {
+    const next = [...value];
+    [next[i], next[i + by]] = [next[i + by]!, next[i]!];
+    onChange(next);
+  };
+  const btn = "rounded border border-slate-300 px-2 text-sm disabled:opacity-30";
+
+  return (
+    <ol className="space-y-1">
+      {value.map((tb, i) => (
+        <li key={tb} className="flex items-center gap-2 rounded bg-slate-50 px-2 py-1 text-sm">
+          <span className="w-5 text-slate-500">{i + 1}.</span>
+          <span className="flex-1">{t.settings.tieBreakers[tb]}</span>
+          <button type="button" className={btn} disabled={i === 0} onClick={() => move(i, -1)} aria-label={t.settings.moveUp}>
+            ↑
+          </button>
+          <button
+            type="button"
+            className={btn}
+            disabled={i === value.length - 1}
+            onClick={() => move(i, 1)}
+            aria-label={t.settings.moveDown}
+          >
+            ↓
+          </button>
+        </li>
+      ))}
+    </ol>
+  );
+}
