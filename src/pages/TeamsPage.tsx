@@ -4,7 +4,7 @@ import { t } from "../i18n";
 import { useTournament } from "../store/useTournament";
 
 export function TeamsPage() {
-  const { teams, addTeam } = useTournament();
+  const { teams, addTeam, loadExample } = useTournament();
   const [name, setName] = useState("");
   const key = (n: string) => n.trim().toLocaleLowerCase("fr");
 
@@ -16,33 +16,36 @@ export function TeamsPage() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-baseline justify-between">
-        <h2 className="text-xl font-bold">{t.teams.title}</h2>
-        <span className="text-sm text-slate-500">{t.teams.count(teams.length)}</span>
-      </div>
-      <form onSubmit={submit} className="flex gap-2">
-        <input
-          className="flex-1 rounded border border-slate-300 px-3 py-2"
-          placeholder={t.teams.newTeamPlaceholder}
-          aria-label={t.teams.newTeamPlaceholder}
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-        <button className="rounded bg-emerald-700 px-4 py-2 font-medium text-white hover:bg-emerald-800">
-          {t.teams.addTeam}
-        </button>
-      </form>
-      {teams.length === 0 && <p className="text-slate-500">{t.teams.empty}</p>}
-      <div className="space-y-4">
-        {teams.map((team) => (
-          <TeamCard
-            key={team.id}
-            team={team}
-            duplicateName={teams.some((o) => o.id !== team.id && key(o.name) === key(team.name))}
+    <div className="space-y-10">
+      <form onSubmit={submit} className="flex flex-col gap-3 bg-pitch p-6 text-white sm:flex-row sm:items-end">
+        <label className="flex flex-1 flex-col gap-2 text-lg font-bold">
+          {t.teams.newTeamPlaceholder}
+          <input
+            className="min-h-14 bg-white px-4 text-xl text-ink"
+            placeholder={t.teams.newTeamExample}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
           />
-        ))}
-      </div>
+        </label>
+        <button className="btn min-h-14 bg-ink px-8 text-lg text-white hover:bg-black">{t.teams.addTeam}</button>
+      </form>
+      {teams.length === 0 && (
+        <div className="flex flex-wrap items-center justify-between gap-4 bg-turf p-6">
+          <p className="max-w-xl text-lg">
+            {t.teams.empty} {t.example.hint}
+          </p>
+          <button className="btn btn-quiet bg-white" onClick={loadExample}>
+            {t.example.load}
+          </button>
+        </div>
+      )}
+      {teams.map((team) => (
+        <TeamCard
+          key={team.id}
+          team={team}
+          duplicateName={teams.some((o) => o.id !== team.id && key(o.name) === key(team.name))}
+        />
+      ))}
     </div>
   );
 }

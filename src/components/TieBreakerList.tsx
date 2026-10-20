@@ -7,13 +7,13 @@ export function TieBreakerList({ value, onChange }: { value: TieBreaker[]; onCha
     [next[i], next[i + by]] = [next[i + by]!, next[i]!];
     onChange(next);
   };
-  const btn = "rounded border border-slate-300 px-2 text-sm disabled:opacity-30";
+  const btn = "btn btn-quiet min-h-9 px-3 bg-white";
 
   return (
     <ol className="space-y-1">
       {value.map((tb, i) => (
-        <li key={tb} className="flex items-center gap-2 rounded bg-slate-50 px-2 py-1 text-sm">
-          <span className="w-5 text-slate-500">{i + 1}.</span>
+        <li key={tb} className="flex items-center gap-2 bg-turf px-3 py-1.5">
+          <span className="w-6 font-display text-2xl leading-none text-pitch">{i + 1}</span>
           <span className="flex-1">{t.settings.tieBreakers[tb]}</span>
           <button type="button" className={btn} disabled={i === 0} onClick={() => move(i, -1)} aria-label={t.settings.moveUp}>
             ↑

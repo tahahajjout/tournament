@@ -7,11 +7,15 @@ import type { Group } from "./types";
  */
 export function groupSizes(teamCount: number): number[] {
   if (teamCount < 3) throw new Error("At least 3 teams are required");
-  const groups = Math.ceil(teamCount / 4);
-  const base = Math.floor(teamCount / groups);
-  if (base < 3) return [teamCount];
-  const extra = teamCount % groups;
-  return Array.from({ length: groups }, (_, i) => base + (i < extra ? 1 : 0));
+  const sizes = evenSizes(teamCount, Math.ceil(teamCount / 4));
+  return sizes.some((s) => s < 3) ? [teamCount] : sizes;
+}
+
+/** Split teams into a chosen number of groups as evenly as possible (manual override), larger groups first. */
+export function evenSizes(teamCount: number, groupCount: number): number[] {
+  const base = Math.floor(teamCount / groupCount);
+  const extra = teamCount % groupCount;
+  return Array.from({ length: groupCount }, (_, i) => base + (i < extra ? 1 : 0));
 }
 
 export type DrawOptions = {

@@ -9,7 +9,7 @@ type Props = {
   onAddWeekly?: (w: WeeklyWindow) => void;
 };
 
-const input = "rounded border border-slate-300 px-2 py-1 text-sm";
+const input = "field";
 // Monday first, as on French calendars.
 const WEEKDAYS = [1, 2, 3, 4, 5, 6, 0];
 
@@ -36,13 +36,13 @@ export function TimeWindowForm({ onAddDated, onAddWeekly }: Props) {
   return (
     <form onSubmit={submit} className="flex flex-wrap items-end gap-3">
       {onAddWeekly && (
-        <label className="flex items-center gap-1 text-sm">
-          <input type="checkbox" checked={weekly} onChange={(e) => setWeekly(e.target.checked)} />
+        <label className="flex min-h-11 items-center gap-2 font-semibold">
+          <input type="checkbox" className="h-5 w-5 accent-pitch" checked={weekly} onChange={(e) => setWeekly(e.target.checked)} />
           {t.common.weekly}
         </label>
       )}
       {weekly ? (
-        <label className="flex flex-col text-xs text-slate-600">
+        <label className="flex flex-col gap-1 text-sm font-semibold">
           {t.common.weekday}
           <select className={input} value={weekday} onChange={(e) => setWeekday(Number(e.target.value))}>
             {WEEKDAYS.map((d) => (
@@ -53,33 +53,33 @@ export function TimeWindowForm({ onAddDated, onAddWeekly }: Props) {
           </select>
         </label>
       ) : (
-        <label className="flex flex-col text-xs text-slate-600">
+        <label className="flex flex-col gap-1 text-sm font-semibold">
           {t.common.date}
           <input className={input} type="date" required value={date} onChange={(e) => setDate(e.target.value)} />
         </label>
       )}
       {onAddWeekly && (
-        <label className="flex items-center gap-1 text-sm">
-          <input type="checkbox" checked={wholeDay} onChange={(e) => setWholeDay(e.target.checked)} />
+        <label className="flex min-h-11 items-center gap-2 font-semibold">
+          <input type="checkbox" className="h-5 w-5 accent-pitch" checked={wholeDay} onChange={(e) => setWholeDay(e.target.checked)} />
           {t.common.wholeDay}
         </label>
       )}
       {!wholeDay && (
         <>
-          <label className="flex flex-col text-xs text-slate-600">
+          <label className="flex flex-col gap-1 text-sm font-semibold">
             {t.common.from}
             <input className={input} type="time" required value={from} onChange={(e) => setFrom(e.target.value)} />
           </label>
-          <label className="flex flex-col text-xs text-slate-600">
+          <label className="flex flex-col gap-1 text-sm font-semibold">
             {t.common.to}
             <input className={input} type="time" required value={to} onChange={(e) => setTo(e.target.value)} />
           </label>
         </>
       )}
-      <button className="rounded bg-emerald-700 px-3 py-1.5 text-sm font-medium text-white hover:bg-emerald-800">
+      <button className="btn btn-primary">
         {t.common.add}
       </button>
-      {error && <p className="w-full text-sm text-red-700">{error}</p>}
+      {error && <p className="w-full text-sm text-flag">{error}</p>}
     </form>
   );
 }

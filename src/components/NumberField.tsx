@@ -2,12 +2,12 @@ type Props = { label: string; value: number; onChange: (v: number) => void; min?
 
 export function NumberField({ label, value, onChange, min = 0 }: Props) {
   return (
-    <label className="flex items-center justify-between gap-4 text-sm">
+    <label className="flex items-center justify-between gap-4">
       {label}
       <input
         type="number"
         min={min}
-        className="w-24 rounded border border-slate-300 px-2 py-1 text-right"
+        className="field w-24 text-right tabular-nums"
         value={value}
         onChange={(e) => {
           const v = e.target.valueAsNumber;

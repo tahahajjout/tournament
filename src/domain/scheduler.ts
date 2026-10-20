@@ -1,4 +1,5 @@
-import { addMinutes, areIntervalsOverlapping, format, getDay, parseISO } from "date-fns";
+import { addMinutes, format, parseISO } from "date-fns";
+import { freeChecker } from "./slots";
 import type { Config, Group, Match, Slot, Stage, Team, TeamRef } from "./types";
 
 export type Unplaced = {
@@ -60,17 +61,8 @@ export function schedule({ matches, slots, teams, groups, config }: ScheduleInpu
     restEndMs: addMinutes(parseISO(s.end), config.minRestMinutes).getTime(),
     day: format(parseISO(s.start), "yyyy-MM-dd"),
   }));
-  const days = [...new Set(ss.map((s) => s.day))];
-  const unavailability = new Map(
-    teams.map((t) => {
-      const weekly = t.unavailableWeekly.flatMap((w) =>
-        days.filter((d) => getDay(parseISO(d)) === w.weekday).map((d) => ({ start: `${d}T${w.from}`, end: `${d}T${w.to}` })),
-      );
-      return [t.id, [...t.unavailable, ...weekly].map((w) => ({ start: parseISO(w.start), end: parseISO(w.end) }))];
-    }),
-  );
-  const isUnavailable = (teamId: string, s: S) =>
-    (unavailability.get(teamId) ?? []).some((w) => areIntervalsOverlapping(w, { start: s.startMs, end: s.endMs }));
+  const free = new Map(teams.map((t) => [t.id, freeChecker(t, slots)]));
+  const isUnavailable = (teamId: string, s: S) => !(free.get(teamId)?.(s) ?? true);
 
   const ordered = [...matches].sort(
     (a, b) => STAGE_ORDER[a.stage] - STAGE_ORDER[b.stage] || (a.round ?? 0) - (b.round ?? 0),

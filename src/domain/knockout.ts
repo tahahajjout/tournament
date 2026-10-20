@@ -1,5 +1,5 @@
 import { rankAcrossGroups, standings } from "./standings";
-import type { Bracket, Config, Group, KnockoutStage, Match, Placeholder, TeamRef } from "./types";
+import type { Bracket, Config, Group, KnockoutStage, Match, MatchResult, Placeholder, TeamRef } from "./types";
 
 /**
  * Knockout size. One group: top 2 → final (top 4 → semis from 5 teams).
@@ -128,13 +128,17 @@ export function resolveTeam(ref: TeamRef, groups: Group[], matches: Match[], con
     case "winner":
     case "loser": {
       const m = matches.find((x) => x.id === p.matchId);
-      const r = m?.result;
-      if (!m || !r) return undefined;
-      const [h, a] = r.home !== r.away ? [r.home, r.away] : r.penalties ? [r.penalties.home, r.penalties.away] : [0, 0];
-      if (h === a) return undefined;
-      const homeWon = h > a;
-      const side = homeWon === (p.type === "winner") ? m.home : m.away;
+      const won = winnerSide(m?.result);
+      if (!m || !won) return undefined;
+      const side = (won === "home") === (p.type === "winner") ? m.home : m.away;
       return resolveTeam(side, groups, matches, config);
     }
   }
+}
+
+/** Which side won, counting penalties; undefined for no result or a draw. */
+export function winnerSide(r: MatchResult | undefined): "home" | "away" | undefined {
+  if (!r) return undefined;
+  const [h, a] = r.home !== r.away ? [r.home, r.away] : r.penalties ? [r.penalties.home, r.penalties.away] : [0, 0];
+  return h > a ? "home" : h < a ? "away" : undefined;
 }

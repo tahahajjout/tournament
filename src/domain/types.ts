@@ -11,6 +11,8 @@ export type Team = {
   players: string[];
   unavailable: TimeWindow[];
   unavailableWeekly: WeeklyWindow[];
+  /** If non-empty, the team can only play inside these weekly windows. */
+  availableWeekly?: WeeklyWindow[];
 };
 
 export type Slot = { id: string; start: string; end: string; pitch: number };

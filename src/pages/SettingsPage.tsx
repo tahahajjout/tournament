@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { BackupSection } from "../components/BackupSection";
 import { NumberField } from "../components/NumberField";
 import { TieBreakerList } from "../components/TieBreakerList";
 import { Toggle } from "../components/Toggle";
@@ -8,8 +9,8 @@ import { useTournament } from "../store/useTournament";
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <section className="space-y-3 rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-      <h3 className="font-semibold">{title}</h3>
+    <section className="panel space-y-3">
+      <h2 className="section-title mb-4">{title}</h2>
       {children}
     </section>
   );
@@ -20,19 +21,18 @@ export function SettingsPage() {
   const s = t.settings;
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-baseline justify-between">
-        <h2 className="text-xl font-bold">{s.title}</h2>
-        <button className="text-sm text-slate-600 hover:underline" onClick={() => confirm(s.confirmReset) && resetConfig()}>
+    <div className="space-y-8">
+      <div className="flex justify-end">
+        <button className="btn btn-quiet" onClick={() => confirm(s.confirmReset) && resetConfig()}>
           {s.reset}
         </button>
       </div>
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-8 md:grid-cols-2">
         <Section title={s.sections.match}>
           <NumberField label={s.halfMinutes} min={1} value={c.halfMinutes} onChange={(v) => set({ halfMinutes: v })} />
           <NumberField label={s.halfTimeMinutes} value={c.halfTimeMinutes} onChange={(v) => set({ halfTimeMinutes: v })} />
           <NumberField label={s.bufferMinutes} value={c.bufferMinutes} onChange={(v) => set({ bufferMinutes: v })} />
-          <p className="text-sm text-slate-500">{s.slotLength(slotMinutes(c))}</p>
+          <p className="text-sm text-ink/70">{s.slotLength(slotMinutes(c))}</p>
         </Section>
         <Section title={s.sections.schedule}>
           <NumberField label={s.pitches} min={1} value={c.pitches} onChange={(v) => set({ pitches: v })} />
@@ -61,6 +61,7 @@ export function SettingsPage() {
             />
           )}
           <NumberField label={s.penaltyKicks} min={1} value={c.penaltyKicks} onChange={(v) => set({ penaltyKicks: v })} />
+          <p className="text-xs text-ink/70">{s.knockoutNote}</p>
         </Section>
         <Section title={s.sections.tieBreakers}>
           <TieBreakerList value={c.tieBreakers} onChange={(v) => set({ tieBreakers: v })} />
@@ -77,6 +78,9 @@ export function SettingsPage() {
         </Section>
         <Section title={s.sections.draw}>
           <NumberField label={s.seed} value={c.seed} onChange={(v) => set({ seed: v })} />
+        </Section>
+        <Section title={t.backup.title}>
+          <BackupSection />
         </Section>
       </div>
     </div>
